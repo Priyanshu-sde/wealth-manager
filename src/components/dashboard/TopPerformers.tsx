@@ -166,7 +166,7 @@ export function TopPerformers() {
       >
         <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20 hover:border-primary/40 transition-colors">
           <CardHeader className="pb-3">
-            <CardTitle className="text-lg font-bold text-primary flex items-center gap-2">
+            <CardTitle className="text-lg font-bold text-white flex items-center gap-2">
               <Award className="h-5 w-5" />
               Portfolio Insights
             </CardTitle>
