@@ -4,19 +4,18 @@ import { prisma } from '@/lib/prisma'
 export async function GET() {
   try {
     const performanceData = await prisma.performanceData.findMany({
-      orderBy: {
-        date: 'asc'
-      }
+      orderBy: { date: 'asc' }
     })
 
-    const timeline = performanceData.map((data: { date: { toISOString: () => string }; portfolio: any; nifty50: any; gold: any }) => ({
+    // Fix the mapping to match your actual database schema
+    const timeline = performanceData.map((data) => ({
       date: data.date.toISOString().split('T')[0],
-      portfolio: data.portfolio,
+      portfolio: data.portfolioValue, // Use portfolioValue from database
       nifty50: data.nifty50,
       gold: data.gold
     }))
 
-    // Calculate returns (simplified calculation for demo)
+    // Calculate returns (you can make this more sophisticated later)
     const returns = {
       portfolio: { 
         "1month": 2.3, 
