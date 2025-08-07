@@ -1,0 +1,81 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Stock {
+  id           String   @id @default(cuid())
+  symbol       String   @unique
+  name         String
+  sector       String
+  marketCap    String
+  exchange     String   @default("NSE")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  holdings     Holding[]
+  
+  @@map("stocks")
+}
+
+model Holding {
+  id                String   @id @default(cuid())
+  stockId           String
+  quantity          Int
+  avgPrice          Float
+  currentPrice      Float
+  value             Float
+  gainLoss          Float
+  gainLossPercent   Float
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  stock             Stock    @relation(fields: [stockId], references: [id], onDelete: Cascade)
+  
+  @@map("holdings")
+}
+
+model PerformanceData {
+  id              String   @id @default(cuid())
+  date            DateTime @unique
+  portfolioValue  Float
+  portfolioReturn Float
+  nifty50         Float
+  nifty50Return   Float
+  gold            Float
+  goldReturn      Float
+  createdAt       DateTime @default(now())
+  
+  @@map("performance_data")
+}
+
+model PortfolioSummary {
+  id                     String   @id @default(cuid())
+  totalValue             Float
+  totalInvested          Float
+  totalGainLoss          Float
+  totalGainLossPercent   Float
+  numberOfHoldings       Int
+  diversificationScore   Float
+  riskLevel              String
+  topPerformerSymbol     String
+  topPerformerName       String
+  topPerformerGain       Float
+  worstPerformerSymbol   String
+  worstPerformerName     String
+  worstPerformerGain     Float
+  updatedAt              DateTime @updatedAt
+  
+  @@map("portfolio_summary")
+}   
