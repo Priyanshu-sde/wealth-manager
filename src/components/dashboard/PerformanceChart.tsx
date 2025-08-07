@@ -74,11 +74,23 @@ export function PerformanceChart() {
 
   if (!data) return null
 
-  const formatValue = (value: number, type: 'currency' | 'index' | 'gold') => {
-    if (type === 'currency') return `₹${(value / 100000).toFixed(1)}L`
-    if (type === 'index') return value.toLocaleString()
-    if (type === 'gold') return `₹${value.toLocaleString()}`
-    return value.toString()
+  // Convert amounts to percentages based on first data point as baseline
+  const convertToPercentages = (timeline: Array<{date: string, portfolio: number, nifty50: number, gold: number}>) => {
+    if (!timeline || timeline.length === 0) return []
+
+    // Use first data point as baseline (100%)
+    const baseline = timeline[0]
+    
+    return timeline.map(item => ({
+      date: item.date,
+      portfolio: ((item.portfolio / baseline.portfolio) * 100) - 100, // Convert to percentage change
+      nifty50: ((item.nifty50 / baseline.nifty50) * 100) - 100,
+      gold: ((item.gold / baseline.gold) * 100) - 100
+    }))
+  }
+
+  const formatPercentage = (value: number) => {
+    return `${value >= 0 ? '+' : ''}${value.toFixed(2)}%`
   }
 
   const CustomTooltip = ({ active, payload, label }: any) => {
@@ -111,10 +123,8 @@ export function PerformanceChart() {
                     {entry.dataKey === 'gold' && 'Gold'}
                   </span>
                 </div>
-                <span className="font-medium text-white text-sm">
-                  {entry.dataKey === 'portfolio' && formatValue(entry.value, 'currency')}
-                  {entry.dataKey === 'nifty50' && formatValue(entry.value, 'index')}
-                  {entry.dataKey === 'gold' && formatValue(entry.value, 'gold')}
+                <span className={`font-medium text-sm ${entry.value >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                  {formatPercentage(entry.value)}
                 </span>
               </div>
             ))}
@@ -127,9 +137,8 @@ export function PerformanceChart() {
 
   // Updated periods array without 1M
   const periods = [
-    { key: '3M' as const, label: '3M', months: 3 },
-    { key: '6M' as const, label: '6M', months: 6 },
-    { key: '1Y' as const, label: '1Y', months: 12 },
+    { key: '3M' as const, label: '3M', months: 12 },
+    { key: '1Y' as const, label: '1Y', months: 3 },
   ]
 
   const getFilteredData = () => {
@@ -146,7 +155,10 @@ export function PerformanceChart() {
     const filtered = data.timeline.filter(item => new Date(item.date) >= startDate)
     
     // If no data for the selected period, return all data
-    return filtered.length > 0 ? filtered : data.timeline
+    const finalData = filtered.length > 0 ? filtered : data.timeline
+    
+    // Convert to percentages
+    return convertToPercentages(finalData)
   }
 
   const getReturnValue = (asset: 'portfolio' | 'nifty50' | 'gold') => {
@@ -192,7 +204,7 @@ export function PerformanceChart() {
               <div className="w-8 h-8 premium-golden-gradient rounded-lg flex items-center justify-center">
                 <TrendingUp className="w-5 h-5 text-black" />
               </div>
-              Performance Analysis
+              Performance Analysis (%)
             </CardTitle>
             <div className="flex gap-2 bg-black/20 p-1 rounded-xl backdrop-blur">
               {periods.map((period) => (
@@ -241,6 +253,7 @@ export function PerformanceChart() {
                     stroke="#9ca3af" 
                     fontSize={12}
                     tick={{ fill: '#9ca3af' }}
+                    tickFormatter={(value) => `${value}%`}
                   />
                   <Tooltip content={<CustomTooltip />} />
                   <Legend 

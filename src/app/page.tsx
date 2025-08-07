@@ -29,10 +29,13 @@ export default function DashboardPage() {
               <RefreshCw className="w-4 h-4" />
               <span className="text-sm">See Today's Market Brief</span>
             </button>
-            <button className="flex items-center space-x-2 px-6 py-2 bg-gradient-to-r from-amber-500 to-yellow-500 text-black rounded-lg hover:from-amber-600 hover:to-yellow-600 transition-colors font-medium">
-              <TrendingUp className="w-4 h-4" />
-              <span className="text-sm">Join Waitlist</span>
-            </button>
+            <button 
+  className="flex cursor-pointer items-center space-x-2 px-6 py-2 bg-gradient-to-r from-amber-500 to-yellow-500 text-black rounded-lg hover:from-amber-600 hover:to-yellow-600 transition-colors font-medium"
+  onClick={() => window.open('https://www.wealthmanager.online/', '_blank')}
+>
+  <TrendingUp className="w-4 h-4" />
+  <span className="text-sm">Join Waitlist</span>
+</button>
           </div>
         </div>
       </motion.nav>
@@ -89,12 +92,44 @@ export default function DashboardPage() {
           </div>
           
           {/* Performance Chart */}
-          <div className="xl:col-span-2">
-            <div className="bg-gray-900/30 backdrop-blur border border-gray-800 rounded-2xl p-6 h-full hover:border-amber-500/30 transition-colors">
-              <PerformanceChart />
+<div className="xl:col-span-2">
+  <div className="bg-gray-900/30 backdrop-blur border border-gray-800 rounded-2xl p-6 h-full hover:border-amber-500/30 transition-colors">
+    <PerformanceChart />
+    
+    {/* Portfolio Insights */}
+    <div className="mt-6 pt-6 border-t border-white/10">
+      <h3 className="text-lg font-semibold golden-text mb-4">AI Insights</h3>
+      <div className="space-y-3">
+        <div className="glass-card p-4 border-l-4 border-amber-500">
+          <div className="flex items-start gap-3">
+            <div className="w-8 h-8 bg-amber-500/20 rounded-lg flex items-center justify-center mt-0.5">
+              <TrendingUp className="w-4 h-4 text-amber-400" />
+            </div>
+            <div>
+              <div className="text-sm font-medium text-white">Rebalancing Opportunity</div>
+              <div className="text-xs text-gray-400">Consider reducing tech allocation by 5% and increasing healthcare exposure</div>
             </div>
           </div>
+        </div>
+        <div className="glass-card p-4 border-l-4 border-blue-500">
+          <div className="flex items-start gap-3">
+            <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center mt-0.5">
+              <BarChart3 className="w-4 h-4 text-blue-400" />
+            </div>
+            <div>
+              <div className="text-sm font-medium text-white">Strong Performance</div>
+              <div className="text-xs text-gray-400">Your portfolio outperformed Nifty 50 by 2.3% this quarter</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
         </motion.div>
+
+        
 
         {/* Holdings and Top Performers */}
         <motion.div
